@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-class Quidquid {
+export class Quidquid {
   private quidQuid: any;
   private parentObjectKey?: string;
 
@@ -9,7 +9,7 @@ class Quidquid {
    * @param {any} quidQuid - The source object from which fields will be extracted.
    * @param {string} [parentObjectKey] - The key of the parent object. Used for constructing full key paths in error messages.
    */
-  constructor(quidQuid: any, parentObjectKey?: string) {
+  private constructor(quidQuid: any, parentObjectKey?: string) {
     this.quidQuid = quidQuid;
     this.parentObjectKey = parentObjectKey;
   }
