@@ -15,6 +15,15 @@ class Quidquid {
   }
 
   /**
+   * Constructs a new Quidquid instance from the provided source object.
+   * @param {any} quidQuid - The source object from which fields will be extracted.
+   * @returns {Quidquid} A new instance of the Quidquid class initialized with the provided source object.
+   */
+  public static from(quidQuid: any): Quidquid {
+    return new Quidquid(quidQuid);
+  }
+
+  /**
    * Constructs the full key name for nested fields.
    * @param {string} key - The key to append to the parent key.
    * @returns {string} The full key name.
@@ -31,7 +40,7 @@ class Quidquid {
    * @returns {Promise<string>} A promise that resolves to the extracted string.
    * @throws Will throw an error if the field is empty or not a string.
    */
-  async pickString(key: string): Promise<string> {
+  public async pickString(key: string): Promise<string> {
     const value = this.quidQuid[key] as string;
     const fullKeyName = this.pickFullkeyName(key);
     if (!value) throw new Error(`${fullKeyName} must not be empty`);
@@ -45,7 +54,7 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<string | undefined>} A promise that resolves to the extracted string or undefined if the field is empty.
    */
-  async pickStringOptional(key: string): Promise<string | undefined> {
+  public async pickStringOptional(key: string): Promise<string | undefined> {
     const value = this.quidQuid[key] as string;
     if (!value) return undefined;
     return this.pickString(key);
@@ -57,7 +66,7 @@ class Quidquid {
    * @returns {Promise<string[]>} A promise that resolves to the extracted array of strings.
    * @throws Will throw an error if the field is empty or not an array of strings.
    */
-  async pickStringArray(key?: string): Promise<string[]> {
+  public async pickStringArray(key?: string): Promise<string[]> {
     let value: string[];
     if (!key) {
       value = this.quidQuid as string[];
@@ -82,7 +91,9 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<string[] | undefined>} A promise that resolves to the extracted array of strings or undefined if the field is empty.
    */
-  async pickStringArrayOptional(key: string): Promise<string[] | undefined> {
+  public async pickStringArrayOptional(
+    key: string
+  ): Promise<string[] | undefined> {
     const value = this.quidQuid[key] as string[];
     if (value == undefined) return undefined;
     return this.pickStringArray(key);
@@ -94,7 +105,7 @@ class Quidquid {
    * @returns {Promise<number>} A promise that resolves to the extracted number.
    * @throws Will throw an error if the field is empty or not a number.
    */
-  async pickNumber(key: string): Promise<number> {
+  public async pickNumber(key: string): Promise<number> {
     const fullKeyName = this.pickFullkeyName(key);
     const value = this.quidQuid[key] as number;
     if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
@@ -108,7 +119,7 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<number | undefined>} A promise that resolves to the extracted number or undefined if the field is empty.
    */
-  async pickNumberOptional(key: string): Promise<number | undefined> {
+  public async pickNumberOptional(key: string): Promise<number | undefined> {
     const value = this.quidQuid[key] as number;
     if (value == undefined) return undefined;
     return this.pickNumber(key);
@@ -120,7 +131,7 @@ class Quidquid {
    * @returns {Promise<number[]>} A promise that resolves to the extracted array of numbers.
    * @throws Will throw an error if the field is empty or not an array of numbers.
    */
-  async pickNumberArray(key?: string): Promise<number[]> {
+  public async pickNumberArray(key?: string): Promise<number[]> {
     let value: number[];
     if (!key) {
       value = this.quidQuid as number[];
@@ -145,7 +156,9 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<number[] | undefined>} A promise that resolves to the extracted array of numbers or undefined if the field is empty.
    */
-  async pickNumberArrayOptional(key: string): Promise<number[] | undefined> {
+  public async pickNumberArrayOptional(
+    key: string
+  ): Promise<number[] | undefined> {
     const value = this.quidQuid[key];
     if (value == undefined) return undefined;
     return this.pickNumberArray(key);
@@ -157,7 +170,7 @@ class Quidquid {
    * @returns {Promise<boolean>} A promise that resolves to the extracted boolean.
    * @throws Will throw an error if the field is empty or not a boolean.
    */
-  async pickBoolean(key: string): Promise<boolean> {
+  public async pickBoolean(key: string): Promise<boolean> {
     const fullKeyName = this.pickFullkeyName(key);
     const value = this.quidQuid[key] as boolean;
     if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
@@ -171,7 +184,7 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<boolean | undefined>} A promise that resolves to the extracted boolean or undefined if the field is empty.
    */
-  async pickBooleanOptional(key: string): Promise<boolean | undefined> {
+  public async pickBooleanOptional(key: string): Promise<boolean | undefined> {
     const value = this.quidQuid[key] as boolean;
     if (value == undefined) return undefined;
     return this.pickBoolean(key);
@@ -182,7 +195,7 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<Quidquid>} A promise that resolves to a new Quidquid instance containing
    * */
-  async pickObject(key: string): Promise<Quidquid> {
+  public async pickObject(key: string): Promise<Quidquid> {
     const fullKeyName = this.pickFullkeyName(key);
     const value = this.quidQuid[key] as any;
     if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
@@ -196,7 +209,7 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<Quidquid | undefined>} A promise that resolves to a new Quidquid instance or undefined if the field is empty.
    */
-  async pickObjectOptional(key: string): Promise<Quidquid | undefined> {
+  public async pickObjectOptional(key: string): Promise<Quidquid | undefined> {
     const value = this.quidQuid[key] as any;
     if (value == undefined) return undefined;
     return this.pickObject(key);
@@ -208,7 +221,7 @@ class Quidquid {
    * @returns {Promise<Quidquid[]>} A promise that resolves to an array of Quidquid instances.
    * @throws Will throw an error if the field is empty or not an array of objects.
    */
-  async pickObjectArray(key?: string): Promise<Quidquid[]> {
+  public async pickObjectArray(key?: string): Promise<Quidquid[]> {
     let value: Quidquid[];
     if (!key) {
       value = this.quidQuid as Quidquid[];
@@ -233,18 +246,11 @@ class Quidquid {
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<Quidquid[] | undefined>} A promise that resolves to an array of Quidquid instances or undefined if the field is empty.
    */
-  async pickObjectArrayOptional(key: string): Promise<Quidquid[] | undefined> {
+  public async pickObjectArrayOptional(
+    key: string
+  ): Promise<Quidquid[] | undefined> {
     const value = this.quidQuid[key] as Quidquid[];
     if (value == undefined) return undefined;
     return this.pickObjectArray(key);
   }
-}
-
-/**
- * Constructs a new Quidquid instance from the provided source object.
- * @param {any} quidQuid - The source object from which fields will be extracted.
- * @returns {Quidquid} A new instance of the Quidquid class initialized with the provided source object.
- */
-export function from(quidQuid: any): Quidquid {
-  return new Quidquid(quidQuid);
 }
