@@ -1,5 +1,22 @@
 import { z } from "zod";
 
+/**
+ * Custom error class for validation errors.
+ * @extends {Error}
+ */
+export class ValidationError extends Error {
+  /**
+   * Creates an instance of ValidationError.
+   * @param {string} message - The error message to be displayed.
+   */
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+/**
+ * Is a utility class for extracting and validating specific fields from an arbitrary object.
+ */
 export class Quidquid {
   private quidQuid: any;
   private parentObjectKey?: string;
@@ -38,14 +55,15 @@ export class Quidquid {
    * Extracts and validates a string field.
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<string>} A promise that resolves to the extracted string.
-   * @throws Will throw an error if the field is empty or not a string.
+   * @throws {ValidationError} Will throw an error if the field is empty or not a string.
    */
   public async pickString(key: string): Promise<string> {
     const value = this.quidQuid[key] as string;
     const fullKeyName = this.pickFullkeyName(key);
-    if (!value) throw new Error(`${fullKeyName} must not be empty`);
+    if (!value) throw new ValidationError(`${fullKeyName} must not be empty`);
     const parseFailure = !(await z.string().safeParseAsync(value)).success;
-    if (parseFailure) throw new Error(`${fullKeyName} must be a string`);
+    if (parseFailure)
+      throw new ValidationError(`${fullKeyName} must be a string`);
     return value;
   }
 
@@ -64,16 +82,18 @@ export class Quidquid {
    * Extracts and validates an array of strings.
    * @param {string} [key] - The key of the field to extract. If not provided, the source object itself is expected to be an array of strings.
    * @returns {Promise<string[]>} A promise that resolves to the extracted array of strings.
-   * @throws Will throw an error if the field is empty or not an array of strings.
+   * @throws {ValidationError} Will throw an error if the field is empty or not an array of strings.
    */
   public async pickStringArray(key?: string): Promise<string[]> {
     let value: string[];
     if (!key) {
       value = this.quidQuid as string[];
-      if (value == undefined) throw new Error("body must not be empty");
+      if (value == undefined)
+        throw new ValidationError("body must not be empty");
       const parseFailure = !(await z.array(z.string()).safeParseAsync(value))
         .success;
-      if (parseFailure) throw new Error("body must be an array of strings");
+      if (parseFailure)
+        throw new ValidationError("body must be an array of strings");
       return value;
     }
     const fullKeyName = this.pickFullkeyName(key as string);
@@ -103,14 +123,16 @@ export class Quidquid {
    * Extracts and validates a number field.
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<number>} A promise that resolves to the extracted number.
-   * @throws Will throw an error if the field is empty or not a number.
+   * @throws {ValidationError} Will throw an error if the field is empty or not a number.
    */
   public async pickNumber(key: string): Promise<number> {
     const fullKeyName = this.pickFullkeyName(key);
     const value = this.quidQuid[key] as number;
-    if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
+    if (value == undefined)
+      throw new ValidationError(`${fullKeyName} must not be empty`);
     const parseFailure = !(await z.number().safeParseAsync(value)).success;
-    if (parseFailure) throw new Error(`${fullKeyName} must be a number`);
+    if (parseFailure)
+      throw new ValidationError(`${fullKeyName} must be a number`);
     return value;
   }
 
@@ -129,16 +151,18 @@ export class Quidquid {
    * Extracts and validates an array of numbers.
    * @param {string} [key] - The key of the field to extract. If not provided, the source object itself is expected to be an array of numbers.
    * @returns {Promise<number[]>} A promise that resolves to the extracted array of numbers.
-   * @throws Will throw an error if the field is empty or not an array of numbers.
+   * @throws {ValidationError} Will throw an error if the field is empty or not an array of numbers.
    */
   public async pickNumberArray(key?: string): Promise<number[]> {
     let value: number[];
     if (!key) {
       value = this.quidQuid as number[];
-      if (value == undefined) throw new Error("body must not be empty");
+      if (value == undefined)
+        throw new ValidationError("body must not be empty");
       const parseFailure = !(await z.array(z.number()).safeParseAsync(value))
         .success;
-      if (parseFailure) throw new Error("body must be an array of numbers");
+      if (parseFailure)
+        throw new ValidationError("body must be an array of numbers");
       return value;
     }
     value = this.quidQuid[key] as number[];
@@ -168,14 +192,16 @@ export class Quidquid {
    * Extracts and validates a boolean field.
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<boolean>} A promise that resolves to the extracted boolean.
-   * @throws Will throw an error if the field is empty or not a boolean.
+   * @throws {ValidationError} Will throw an error if the field is empty or not a boolean.
    */
   public async pickBoolean(key: string): Promise<boolean> {
     const fullKeyName = this.pickFullkeyName(key);
     const value = this.quidQuid[key] as boolean;
-    if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
+    if (value == undefined)
+      throw new ValidationError(`${fullKeyName} must not be empty`);
     const parseFailure = !(await z.boolean().safeParseAsync(value)).success;
-    if (parseFailure) throw new Error(`${fullKeyName} must be a boolean`);
+    if (parseFailure)
+      throw new ValidationError(`${fullKeyName} must be a boolean`);
     return value;
   }
 
@@ -194,13 +220,16 @@ export class Quidquid {
    * Extracts and validates a nested object field, returning a new Quidquid instance.
    * @param {string} key - The key of the field to extract.
    * @returns {Promise<Quidquid>} A promise that resolves to a new Quidquid instance containing
+   * @throws {ValidationError} Will throw an error if the field is empty or not an object.
    * */
   public async pickObject(key: string): Promise<Quidquid> {
     const fullKeyName = this.pickFullkeyName(key);
     const value = this.quidQuid[key] as any;
-    if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
+    if (value == undefined)
+      throw new ValidationError(`${fullKeyName} must not be empty`);
     const parseFailure = !(await z.object({}).safeParseAsync(value)).success;
-    if (parseFailure) throw new Error(`${fullKeyName} must be an object`);
+    if (parseFailure)
+      throw new ValidationError(`${fullKeyName} must be an object`);
     return new Quidquid(value, key);
   }
 
@@ -219,25 +248,28 @@ export class Quidquid {
    * Extracts and validates an array of objects, returning an array of Quidquid instances.
    * @param {string} [key] - The key of the field to extract. If not provided, the source object itself is expected to be an array of objects.
    * @returns {Promise<Quidquid[]>} A promise that resolves to an array of Quidquid instances.
-   * @throws Will throw an error if the field is empty or not an array of objects.
+   * @throws {ValidationError} Will throw an error if the field is empty or not an array of objects.
    */
   public async pickObjectArray(key?: string): Promise<Quidquid[]> {
     let value: Quidquid[];
     if (!key) {
       value = this.quidQuid as Quidquid[];
-      if (value == undefined) throw new Error("body must not be empty");
+      if (value == undefined)
+        throw new ValidationError("body must not be empty");
       const parseFailure = !(await z.array(z.object({})).safeParseAsync(value))
         .success;
-      if (parseFailure) throw new Error("body must be an array of objects");
+      if (parseFailure)
+        throw new ValidationError("body must be an array of objects");
       return value.map((quidQuid) => new Quidquid(quidQuid));
     }
     const fullKeyName = this.pickFullkeyName(key);
     value = this.quidQuid[key] as Quidquid[];
-    if (value == undefined) throw new Error(`${fullKeyName} must not be empty`);
+    if (value == undefined)
+      throw new ValidationError(`${fullKeyName} must not be empty`);
     const parseFailure = !(await z.array(z.object({})).safeParseAsync(value))
       .success;
     if (parseFailure)
-      throw new Error(`${fullKeyName} must be an array of objects`);
+      throw new ValidationError(`${fullKeyName} must be an array of objects`);
     return value.map((quidQuid) => new Quidquid(quidQuid));
   }
 
